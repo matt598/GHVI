@@ -1,20 +1,17 @@
-package main
+package shelter
 
 import (
 	"context"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
 	"github.com/pressly/chi"
-	"github.com/pressly/chi/middleware"
 	"googlemaps.github.io/maps"
 	"html/template"
 	"net/http"
 	"os"
 	"strconv"
-)
 
-var DB *sqlx.DB
+	"github.com/ixchi/gh6/database"
+)
 
 type Shelter struct {
 	ID            int64         `db:"id"`
@@ -71,7 +68,7 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 	}
 	loc := resp[0].Geometry.Location
 
-	DB.MustExec(`insert into shelter (
+	database.DB.MustExec(`insert into shelter (
 		name,
 		address,
 		latitude,
@@ -111,7 +108,7 @@ func fillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	DB.Exec(`update shelter set beds_full = beds_full + 1`)
+	database.DB.Exec(`update shelter set beds_full = beds_full + 1`)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -124,7 +121,7 @@ func unfillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	DB.Exec(`update shelter set beds_full = beds_full - 1`)
+	database.DB.Exec(`update shelter set beds_full = beds_full - 1`)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -140,7 +137,7 @@ func setBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	DB.Exec(`update shelter set beds_full = ?`, parsed)
+	database.DB.Exec(`update shelter set beds_full = ?`, parsed)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -151,33 +148,24 @@ func getUpdateShelter(w http.ResponseWriter, r *http.Request) {
 
 func postUpdateShelter(w http.ResponseWriter, r *http.Request) {}
 
-func main() {
+func GetRouter() http.Handler {
 	r := chi.NewRouter()
 
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Get("/", getShelter)
+	r.Post("/", postShelter)
 
-	DB = sqlx.MustOpen("mysql", "root:@/gh6")
+	r.Route("/:shelterID", func(r chi.Router) {
+		r.Use(ShelterCtx)
 
-	r.Get("/", nil)
+		r.Get("/", getUpdateShelter)
+		r.Post("/", postUpdateShelter)
 
-	r.Route("/shelter", func(r chi.Router) {
-		r.Get("/", getShelter)
-		r.Post("/", postShelter)
-
-		r.Route("/:shelterID", func(r chi.Router) {
-			r.Use(ShelterCtx)
-
-			r.Get("/", getUpdateShelter)
-			r.Post("/", postUpdateShelter)
-
-			r.Post("/bed/fill", fillBed)
-			r.Post("/bed/unfill", unfillBed)
-			r.Post("/bed/set", setBed)
-		})
+		r.Post("/bed/fill", fillBed)
+		r.Post("/bed/unfill", unfillBed)
+		r.Post("/bed/set", setBed)
 	})
 
-	http.ListenAndServe("127.0.0.1:8080", r)
+	return r
 }
 
 func ShelterCtx(next http.Handler) http.Handler {
@@ -185,7 +173,7 @@ func ShelterCtx(next http.Handler) http.Handler {
 		itemID := chi.URLParam(r, "shelterID")
 
 		var shelter Shelter
-		err := DB.Get(&shelter, `SELECT * FROM shelter WHERE id = ?`, itemID)
+		err := database.DB.Get(&shelter, `SELECT * FROM shelter WHERE id = ?`, itemID)
 		if err != nil {
 			http.Error(w, http.StatusText(404), 404)
 			return

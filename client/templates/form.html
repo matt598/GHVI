@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>jinfafeaio</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<h1>Add client</h1>
+
+				<form method="POST" class="form-horizontal">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Date of birth</label>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="month" class="form-control">
+								{{ range $idx, $month := .Months }}
+									<option value="{{ inc $idx }}">{{ $month }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="day" class="form-control">
+								{{ range $idx, $day := .Days }}
+									<option value="{{ $day }}">{{ $day }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="year" class="form-control">
+								{{ range $idx, $year := .Years }}
+									<option value="{{ $year }}">{{ $year }}</option>
+								{{ end }}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="gender" class="col-sm-2 control-label" id="gender">Gender</label>
+						<div class="col-sm-2">
+							<select name="gender" class="form-control">
+								<option value="0">Female</option>
+								<option value="1">Male</option>
+								<option value="2">Transgender Male to Female</option>
+								<option value="3">Transgender Female to Male</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="dependents"> Dependents
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="veteran"> Veteran
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="disability"> Disability
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="chronic"> Chronic
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="mental"> Mental
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="substance"> Substance
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="domestic"> Domestic
+							</label>
+						</div>
+					</div>
+
+					<button>do the thing</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
