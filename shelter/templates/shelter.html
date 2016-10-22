@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>jinfafeaio</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css">
+	<style type="text/css">form{display:inline-block;}</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<h1>{{ .Shelter.Name }}</h1>
+
+				<p>
+					Out of {{ .Shelter.BedsAvailable }}, {{ .Shelter.BedsFull }} are in use.
+				</p>
+
+				{{ if ne .Shelter.BedsFull 0 }}
+					<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/unfill" class="form-inline">
+						<button type="submit" class="btn btn-default">Unfill Bed</button>
+					</form>
+				{{ end }}
+
+				{{ if ne .Shelter.BedsAvailable .Shelter.BedsFull }}
+					<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/fill" class="form-inline">
+						<button type="submit" class="btn btn-default">Fill Bed</button>
+					</form>
+				{{ end }}
+
+				<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/set" class="form-inline">
+					<input type="text" name="value" class="form-control" value="{{ .Shelter.BedsFull }}">
+					<button type="submit" class="btn btn-default">Set</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
