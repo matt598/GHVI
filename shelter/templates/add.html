@@ -34,23 +34,95 @@
 						</div>
 					</div>
 
-					<input type="text" name="min_age" placeholder="Minimum age"><br>
-					<input type="text" name="max_age" placeholder="Maximum age"><br>
-					<input type="checkbox" name="allow_male"> Allow male<br>
-					<input type="checkbox" name="allow_female"> Allow female<br>
-					<input type="checkbox" name="allow_trans"> Allow transgender<br>
-					Disability <select name="disability">
-						<option value="1">Require</option>
-						<option value="2">Allow</option>
-						<option value="3">No</option>
-					</select><br>
-					Dependent <select name="dependent">
-						<option value="1">Require</option>
-						<option value="2">Allow</option>
-						<option value="3">No</option>
-					</select><br>
-					<input type="checkbox" name="abuse"> Abuse<br>
-					<input type="checkbox" name="veteran"> Veteran<br>
+					<div class="form-group">
+						<label  for="min_age" class="col-sm-2
+						control-label" id="min_age">Minimum Age
+						</label>
+						<div class="col-sm-10">
+							<input type="text" name="min_age" placeholder="Minimum age" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label  for="max_age" class="col-sm-2
+						control-label" id="max_age">Maximum Age
+						</label>
+						<div class="col-sm-10">
+							<input type="text" name="max_age" placeholder="Maximum age" class="form-control">
+						</div>
+					</div>
+					<h4>Allowed Genders</h4>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<div class ="checkbox">
+								<label>
+									<input type="checkbox" name="allow_male">Allow Male
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-2">
+							<div class ="checkbox">
+								<label>
+									<input type="checkbox" name="allow_female">Allow Female
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-2">
+							<div class ="checkbox">
+								<label>
+									<input type="checkbox" name="allow_trans">Allow Transgender
+								</label>
+							</div>
+						</div>
+					</div>
+					<br>
+
+					<h4>Specialties</h4>
+					<div class="form-group">
+						<label for="dependent" class="col-sm-2 control-label" id="dependent">Dependents?
+						</label>
+						<select name="dependent">
+							<option value="2">Allow</option>
+							<option value="1">Require</option>
+							<option value="3">No</option>
+						</select><br>
+					</div>
+
+					<div class="form-group">
+						<label for="disability" class="col-sm-2 control-label" id="disability">Disabilities?
+						</label>
+						<select name="disability">
+							<option value="2">Allow</option>
+							<option value="1">Require</option>
+							<option value="3">No</option>
+						</select><br>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2">
+							<div class ="checkbox">
+								<label>
+									<input type="checkbox" name="abuse">Domestic Abuse
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-2">
+							<div class ="checkbox">
+								<label>
+									<input type="checkbox" name="veteran">Veteran Support
+								</label>
+							</div>
+						</div>
+					</div>
+
 				</form>
 			</div>
 		</div>
