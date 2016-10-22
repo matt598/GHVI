@@ -12,121 +12,111 @@
 			<div class="col-sm-12">
 				<h1>Add shelter</h1>
 
-				<form method="POST" class="form-horizontal">
+				<form method="POST">
 					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label" id="name">Name</label>
-						<div class="col-sm-10">
-							<input type="text" name="name" placeholder="Name" class="form-control">
-						</div>
+						<label for="name">Name</label>
+						<input type="text" class="form-control"name="name" id=name placeholder="Name" >
 					</div>
 
 					<div class="form-group">
-						<label for="address" class="col-sm-2 control-label" id="address">Address</label>
-						<div class="col-sm-10">
-							<input type="text" name="address" placeholder="Address" class="form-control">
-						</div>
+						<label for="address">Address</label>
+						<input type="text" class="form-control"name="address" id=address placeholder="Address" >
 					</div>
 
 					<div class="form-group">
-						<label for="beds_available" class="col-sm-2 control-label" id="beds_available">Beds available</label>
-						<div class="col-sm-10">
-							<input type="text" name="beds_available" placeholder="Beds available" class="form-control">
-						</div>
+						<label for="beds_available">Beds available</label>
+						<input type="text" class="form-control"name="beds_available" id=beds_available placeholder="Address" >
 					</div>
 
 					<div class="form-group">
-						<label  for="min_age" class="col-sm-2
-						control-label" id="min_age">Minimum Age
-						</label>
-						<div class="col-sm-10">
-							<input type="text" name="min_age" placeholder="Minimum age" class="form-control">
-						</div>
+						<label for="min_age">Minimum Age</label>
+						<input type="text" class="form-control"name="min_age" id=min_age placeholder="Address" >
 					</div>
 
 					<div class="form-group">
-						<label  for="max_age" class="col-sm-2
-						control-label" id="max_age">Maximum Age
-						</label>
-						<div class="col-sm-10">
-							<input type="text" name="max_age" placeholder="Maximum age" class="form-control">
-						</div>
+						<label for="max_age">Maximum Age</label>
+						<input type="text" class="form-control"name="max_age" id=max_age placeholder="Address" >
 					</div>
+
+					
 					<h4>Allowed Genders</h4>
-					<div class="form-group">
-						<div class="col-sm-2">
+					<ul class="list-inline">
+						<li>
+							<div class="form-group">
 							<div class ="checkbox">
 								<label>
 									<input type="checkbox" name="allow_male">Allow Male
 								</label>
 							</div>
 						</div>
-					</div>
+						</li>
 
-					<div class="form-group">
-						<div class="col-sm-2">
-							<div class ="checkbox">
-								<label>
-									<input type="checkbox" name="allow_female">Allow Female
-								</label>
+						<li>
+							<div class="form-group">
+								<div class ="checkbox">
+									<label>
+										<input type="checkbox" name="allow_female">Allow Female
+									</label>
+								</div>
 							</div>
-						</div>
-					</div>
+						</li>
 
-					<div class="form-group">
-						<div class="col-sm-2">
-							<div class ="checkbox">
-								<label>
-									<input type="checkbox" name="allow_trans">Allow Transgender
-								</label>
+						<li>
+							<div class="form-group">
+								<div class ="checkbox">
+									<label>
+										<input type="checkbox" name="allow_trans">Allow Transgender
+									</label>
+								</div>
 							</div>
-						</div>
-					</div>
-					<br>
+						</li>
+					</ul>	
+
+					
 
 					<h4>Specialties</h4>
+
 					<div class="form-group">
-						<label for="dependent" class="col-sm-2 control-label" id="dependent">Dependents?
-						</label>
+						<label for="dependent">Dependents?</label>
 						<select name="dependent">
 							<option value="2">Allow</option>
 							<option value="1">Require</option>
 							<option value="3">No</option>
-						</select><br>
+						</select>
 					</div>
 
 					<div class="form-group">
-						<label for="disability" class="col-sm-2 control-label" id="disability">Disabilities?
+						<label for="disability">Disabilities?
 						</label>
 						<select name="disability">
 							<option value="2">Allow</option>
 							<option value="1">Require</option>
 							<option value="3">No</option>
-						</select><br>
+						</select>
 					</div>
 					<div class="form-group">
-						<div class="col-sm-2">
+						<div class="col-sm-12">
 							<div class ="checkbox">
 								<label>
-									<input type="checkbox" name="abuse">Domestic Abuse
+									<input type="checkbox" name="abuse">Require Domestic Violence Victium
 								</label>
 							</div>
 						</div>
 					</div>
 
 					<div class="form-group">
-						<div class="col-sm-2">
+						<div class="col-sm-12">
 							<div class ="checkbox">
 								<label>
-									<input type="checkbox" name="veteran">Veteran Support
+									<input type="checkbox" name="veteran">Require Veteran Status
 								</label>
 							</div>
 						</div>
 					</div>
-
-					<button>do the thing</button>
 				</form>
 			</div>
 		</div>
+		<br><button>do the thing</button><br>
 	</div>
 </body>
 </html>
