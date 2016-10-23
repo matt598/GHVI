@@ -240,6 +240,7 @@ def places(request):
                      answers['disability'] == '1',
                      )
                     )
+        conn.commit()
 
         set_with_expiry(sess, 'client', cur.lastrowid)
 
