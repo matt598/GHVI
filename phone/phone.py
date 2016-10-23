@@ -170,7 +170,7 @@ def limiters(request):
     yesno = Choices('1,2,yes,no', mode='any')
     opts = [{
         'name': 'gender',
-        'msg': 'What is your gender? 1 for male, 2 for female, 3 transgender male to female, 4 transgender female to male',
+        'msg': 'What is your gender? 1 for female, 2 for male, 3 transgender male to female, 4 transgender female to male',
         'choice': Choices('1,2,3,4')
     }, {
         'msg': 'Enter 1 for yes or 2 for no'
@@ -226,17 +226,34 @@ def places(request):
     for action in r['actions']:
         answers[action['name']] = action['interpretation']
 
+    with conn.cursor() as cur:
+        cur.execute("""
+            INSERT INTO client
+                (dob, gender, dependents, veteran, domestic, disability)
+                VALUES (?, ?, ?, ?, ?, ?)
+        """,
+                    ('%d-%d-%d' % (dt.year, dt.month, dt.day),
+                     int(action['gender']) - 1,
+                     action['dependent'] == '1',
+                     action['veteran'] == '1',
+                     action['abuse'] == '1',
+                     action['disability'] == '1',
+                     )
+                    )
+
+        set_with_expiry(sess, 'client', cur.lastrowid)
+
     def isyes(ans):
         return ans == '1' or ans == 'yes'
 
     def istrans(ans):
-        return ans == '2' or ans == '3'
+        return ans == '3' or ans == '4'
 
     def ismale(ans):
-        return ans == '1'
+        return ans == '2'
 
     def isfemale(ans):
-        return ans == '0'
+        return ans == '1'
 
     has_said = 0
 
@@ -275,7 +292,8 @@ def places(request):
             continue
 
         has_said += 1
-        spoken_shelters.append('%d. %s. %s' % (has_said, shelter[1], shelter[2]))
+        spoken_shelters.append('%d. %s. %s' %
+                               (has_said, shelter[1], shelter[2]))
         saved_shelters[has_said] = shelter[0]
 
         if has_said > 5:
@@ -285,7 +303,8 @@ def places(request):
 
     t.say('You may enter a number to notify the location that you are on the way. ')
 
-    t.ask(Choices('1,2,3,4,5'), say='. '.join(spoken_shelters), timeout=120, mode='dtmf')
+    t.ask(Choices('1,2,3,4,5'), say='. '.join(
+        spoken_shelters), timeout=120, mode='dtmf')
 
     t.on(event='continue', next='/info.json')
 
@@ -299,6 +318,7 @@ def info(request):
 
     sess = r._sessionId
     d = json.loads(get(sess, 'saved'))
+    u = get(sess, 'client')
 
     i = r.getInterpretation()
 
@@ -308,6 +328,8 @@ def info(request):
         """, (d[i]))
 
         shelter = cur.fetchone()
+
+    print('User %d going to location %s' % (u, shelter[0]))
 
     # TODO: send the email
 
