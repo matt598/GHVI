@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 import os
 import pymysql
+import requests
 
 
 def get_phone_info_from_payphone(number):
@@ -325,14 +326,37 @@ def info(request):
 
     with conn.cursor() as cur:
         cur.execute("""
-            SELECT name FROM shelter WHERE id = %s
+            SELECT name, email FROM shelter WHERE id = %s
         """, (d[i]))
 
         shelter = cur.fetchone()
 
+        cur.execute("""SELECT dob, gender FROM client WHERE id = %s""", (u))
+
+        user = cur.fetchone()
+
     print('User %s going to location %s' % (u, shelter[0]))
 
-    # TODO: send the email
+    parts = user[0].split('-')
+    gender = [
+        'female',
+        'male',
+        'transgender male to female',
+        'transgender female to male',
+    ][user[1]]
+
+    request_url = 'https://api.mailgun.net/v2/{domain}/messages'.format(domain=os.environ['DOMAIN'])
+    r = requests.post(request_url, auth=('api', os.environ['MAILGUN']), data={
+        'from': 'no-reply@ghc.li',
+        'to': shelter[1],
+        'subject': 'Incoming person',
+        'text': """There is an incoming {gender} person
+
+        Birth date: {year}-{month}-{day}
+
+        System ID: {id}
+        """.format(id=u, year=parts[0], month=parts[1], day=parts[2], gender=gender)
+    })
 
     t.say('We have notified %s that you are on the way.' % (shelter[0]))
 
