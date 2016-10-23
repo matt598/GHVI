@@ -230,7 +230,7 @@ def places(request):
         cur.execute("""
             INSERT INTO client
                 (dob, gender, dependents, veteran, domestic, disability)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s)
         """,
                     ('%d-%d-%d' % (dt.year, dt.month, dt.day),
                      int(answers['gender']) - 1,
