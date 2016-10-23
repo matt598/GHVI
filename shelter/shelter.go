@@ -32,6 +32,8 @@ type Shelter struct {
 	Dependent     int           `db:"dependent"`
 	Abuse         bool          `db:"abuse"`
 	Veteran       bool          `db:"veteran"`
+
+	Distance *float32 `db:"distance"`
 }
 
 //go:generate go-bindata templates/
@@ -114,7 +116,7 @@ func fillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = beds_full + 1`)
+	database.DB.Exec(`update shelter set beds_full = beds_full + 1 where shelter_id = ?`, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -127,7 +129,7 @@ func unfillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = beds_full - 1`)
+	database.DB.Exec(`update shelter set beds_full = beds_full - 1 where shelter_id = ?`, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -143,7 +145,7 @@ func setBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = ?`, parsed)
+	database.DB.Exec(`update shelter set beds_full = ? where shelter_id = ?`, parsed, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -154,11 +156,47 @@ func getUpdateShelter(w http.ResponseWriter, r *http.Request) {
 
 func postUpdateShelter(w http.ResponseWriter, r *http.Request) {}
 
+func getLocation(w http.ResponseWriter, r *http.Request) {
+	runTemplate("templates/address.html", w, nil)
+}
+
+func listShelters(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	c, err := maps.NewClient(maps.WithAPIKey(os.Getenv("GOOGLEMAPS_API")))
+	if err != nil {
+		panic(err)
+	}
+	req := &maps.GeocodingRequest{
+		Address: getFormValue(r, "address"),
+	}
+	resp, err := c.Geocode(context.Background(), req)
+	if err != nil {
+		panic(err)
+	}
+	loc := resp[0].Geometry.Location
+
+	var shelters []Shelter
+	err = database.DB.Select(&shelters, `
+		SELECT *, round(haversine(shelter.latitude, shelter.longitude, ?, ?) * 0.621371, 2) distance
+		FROM shelter
+		ORDER BY distance ASC
+		LIMIT 10
+	`, loc.Lat, loc.Lng)
+
+	runTemplate("templates/list.html", w, struct {
+		Shelters []Shelter
+	}{shelters})
+}
+
 func GetRouter() http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/", getShelter)
 	r.Post("/", postShelter)
+
+	r.Get("/list", getLocation)
+	r.Post("/list", listShelters)
 
 	r.Route("/:shelterID", func(r chi.Router) {
 		r.Use(ShelterCtx)

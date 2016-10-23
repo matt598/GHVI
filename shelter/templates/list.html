@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Penguin</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css">
+	<style type="text/css">form{display:inline-block;}</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<h1>Nearby shelters</h1>
+			</div>
+
+			{{ range $idx, $shelter := .Shelters }}
+				<div class="col-sm-12">
+					<h2>{{ $shelter.Name }}</h2>
+					<h4 class="muted">Distance {{ $shelter.Distance }} mi</h4>
+
+					<p>
+						Location phone number: {{ $shelter.Phone }}
+					</p>
+
+					<p>
+						There are {{ $shelter.BedsFull }} beds in use out of {{ $shelter.BedsAvailable }}.
+					</p>
+
+					<h6><a href="/shelter/{{ $shelter.ID }}">Manage</a></h6>
+				</div>
+			{{ end }}
+		</div>
+	</div>
+</body>
+</html>

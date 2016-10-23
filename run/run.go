@@ -18,5 +18,9 @@ func main() {
 	r.Mount("/shelter", shelter.GetRouter())
 	r.Mount("/client", client.GetRouter())
 
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/shelter/list", 302)
+	})
+
 	http.ListenAndServe("127.0.0.1:8080", r)
 }
