@@ -72,7 +72,7 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 	}
 	loc := resp[0].Geometry.Location
 
-	database.DB.MustExec(`insert into shelter (
+	q := database.DB.MustExec(`insert into shelter (
 		name,
 		address,
 		phone,
@@ -88,7 +88,7 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 		disability,
 		dependent,
 		abuse,
-		veteran) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		veteran) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		getFormValue(r, "name"),
 		getFormValue(r, "address"),
 		getFormValue(r, "phone"),
@@ -106,6 +106,9 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 		getFormValueWithDefault(r, "abuse", false),
 		getFormValueWithDefault(r, "veteran", false),
 	)
+	id, _ := q.LastInsertId()
+
+	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(id, 10), 302)
 }
 
 func fillBed(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +119,7 @@ func fillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = beds_full + 1 where shelter_id = ?`, shelter.ID)
+	database.DB.Exec(`update shelter set beds_full = beds_full + 1 where id = ?`, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -129,7 +132,7 @@ func unfillBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = beds_full - 1 where shelter_id = ?`, shelter.ID)
+	database.DB.Exec(`update shelter set beds_full = beds_full - 1 where id = ?`, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
@@ -145,7 +148,7 @@ func setBed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Exec(`update shelter set beds_full = ? where shelter_id = ?`, parsed, shelter.ID)
+	database.DB.Exec(`update shelter set beds_full = ? where id = ?`, parsed, shelter.ID)
 
 	http.Redirect(w, r, "/shelter/"+strconv.FormatInt(shelter.ID, 10), 302)
 }
