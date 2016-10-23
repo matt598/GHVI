@@ -9,6 +9,39 @@
 <body>
 	<div class="container">
 		<div class="row">
+			<ul class="list-inline">
+				<li>
+					<div class="form-group">
+						<div class ="radio">
+							<label>
+								<input type="radio" name=r value="project-entry">Project Entry
+							</label>
+						</div>
+					</div>
+				</li>
+
+				<li>
+					<div class="form-group">
+						<div class ="radio">
+							<label>
+								<input type="radio" name=r value="shelters">shelters
+							</label>
+						</div>
+					</div>
+				</li>
+
+				<li>
+					<div class="form-group">
+					<div class ="radio">
+						<label>
+							<input type="radio" name=r value="housing">Housing
+						</label>
+					</div>
+				</div>
+				</li>
+			</ul>	
+		</div>
+		<div class="row project-entry hidden">
 			<div class="col-sm-12">
 				<h1>Add client</h1>
 
@@ -110,6 +143,222 @@
 					</div>
 
 					<button>do the thing</button>
+				</form>
+			</div>
+		</div>
+		<div class="row shelters hidden">
+			<div class="col-sm-12">
+				<h1>Add client</h1>
+
+				<form method="POST" class="form-horizontal">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Date of birth</label>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="month" class="form-control">
+								{{ range $idx, $month := .Months }}
+									<option value="{{ inc $idx }}">{{ $month }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="day" class="form-control">
+								{{ range $idx, $day := .Days }}
+									<option value="{{ $day }}">{{ $day }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="year" class="form-control">
+								{{ range $idx, $year := .Years }}
+									<option value="{{ $year }}">{{ $year }}</option>
+								{{ end }}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="gender" class="col-sm-2 control-label" id="gender">Gender</label>
+						<div class="col-sm-2">
+							<select name="gender" class="form-control">
+								<option value="0">Female</option>
+								<option value="1">Male</option>
+								<option value="2">Transgender Male to Female</option>
+								<option value="3">Transgender Female to Male</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="dependents"> Dependents
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="veteran"> Veteran
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="disability"> Disability
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="chronic"> Chronic
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="mental"> Mental
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="substance"> Substance
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<label class="control-label">
+								<input type="checkbox" name="domestic"> Domestic
+							</label>
+						</div>
+					</div>
+
+					<button>do the thing</button>
+				</form>
+			</div>
+		</div>
+		<div class="row housing">
+			<div class="col-sm-12">
+				<h1>Add client</h1>
+
+				<form method="POST" class="form-horizontal">
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Date of birth</label>
+						<div class="col-md-2 col-sm-12">
+							<select name="month" class="form-control">
+								{{ range $idx, $month := .Months }}
+									<option value="{{ inc $idx }}">{{ $month }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="day" class="form-control">
+								{{ range $idx, $day := .Days }}
+									<option value="{{ $day }}">{{ $day }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="year" class="form-control">
+								{{ range $idx, $year := .Years }}
+									<option value="{{ $year }}">{{ $year }}</option>
+								{{ end }}
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Name</label>
+						</div>
+						<!--Hover ? box-->
+						<!--Text Field-->
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Prior Living Situation</label>
+						<!--Hover ? box-->
+						<!--Drop Down-->
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">length of stay in prior living situation</label>
+						<!--Hover ? box-->
+						<!--Drop Down-->
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">Date they started being homeless</label>
+						<div class="col-md-2 col-sm-12">
+							<select name="month" class="form-control">
+								{{ range $idx, $month := .Months }}
+									<option value="{{ inc $idx }}">{{ $month }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="day" class="form-control">
+								{{ range $idx, $day := .Days }}
+									<option value="{{ $day }}">{{ $day }}</option>
+								{{ end }}
+							</select>
+						</div>
+
+						<div class="col-md-2 col-sm-12">
+							<select name="year" class="form-control">
+								{{ range $idx, $year := .Years }}
+									<option value="{{ $year }}">{{ $year }}</option>
+								{{ end }}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label" id="name">How many times has the client been homeless on the streets, in shelter, or in safe havens in the past three years, including this time?</label>
+						</div>
+						<!--Hover ? box, -1 for refused to answer-->
+						<div class="col-md-2 col-sm-4">
+							<select name="time-homeless" class = "form-control">
+								<option value="1">1</option>
+						    <option value="2">2</option>
+						    <option value="3">3</option>
+						    <option value="4">4</option>
+						    <option value="5">5</option>
+						    <option value="6">6</option>
+						    <option value="7">7</option>
+						    <option value="8">8</option>
+						    <option value="9">9</option>
+						    <option value="10">10</option>
+						    <option value="11">11</option>
+						    <option value="12">12</option>
+						    <option value="12+">12+</option>
+						    <option value="Doesn't know">Doesn't know</option>
+						    <option value="Won't Say">Won't Say</option>
+						  </select>
+						 </div>
+						<!--Drop Down-->
+					</div>
+
+						
+					</div>	
+					<!--Do the thing-->
+					<button>print this thing</button>
 				</form>
 			</div>
 		</div>
