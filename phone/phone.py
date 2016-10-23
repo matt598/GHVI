@@ -281,7 +281,7 @@ def places(request):
 
     t.say('You may enter a number to notify the location that you are on the way. ')
 
-    t.ask(Choices('1,2,3,4,5'), say='. '.join(spoken_shelters), timeout=120)
+    t.ask(Choices('1,2,3,4,5'), say='. '.join(spoken_shelters), timeout=120, mode='dtmf')
 
     t.on(event='continue', next='/info.json')
 
