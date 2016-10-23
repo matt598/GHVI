@@ -220,7 +220,7 @@ def places(request):
     age = datetime.now().year - dt.year
 
     for action in r['actions']:
-        answers[action['name']] = int(action['interpretation'])
+        answers[action['name']] = action['interpretation']
 
     def isyes(ans):
         return ans == '1' or ans == 'yes'
