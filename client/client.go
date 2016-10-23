@@ -2,7 +2,9 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/ixchi/gh6/database"
+	"github.com/ixchi/gh6/types"
 	"github.com/pressly/chi"
 	"html/template"
 	"log"
@@ -14,6 +16,16 @@ import (
 //go:generate go-bindata templates/
 
 type Client struct {
+	ID         int64        `db:"id" json:"id"`
+	Birthday   time.Time    `db:"dob" json:"dob"`
+	Gender     types.Gender `db:"gender" json:"gender"`
+	Dependents bool         `db:"dependents" json:"dependents"`
+	Veteran    bool         `db:"veteran" json:"veteran"`
+	Disability bool         `db:"disability" json:"disability"`
+	Chronic    bool         `db:"chronic" json:"chronic"`
+	Mental     bool         `db:"mental" json:"mental"`
+	Substance  bool         `db:"substance" json:"substance"`
+	Domestic   bool         `db:"domestic" json:"domestic"`
 }
 
 func getClient(w http.ResponseWriter, r *http.Request) {
@@ -90,11 +102,28 @@ func postClient(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(200), 200)
 }
 
+func jsonClient(w http.ResponseWriter, r *http.Request) {
+	var client Client
+	database.DB.Get(&client,
+		`select * from client where id = ?`,
+		r.Context().Value("client").(Client).ID,
+	)
+
+	b, _ := json.Marshal(client)
+	w.Write(b)
+}
+
 func GetRouter() http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/", getClient)
 	r.Post("/", postClient)
+
+	r.Route("/:clientID", func(r chi.Router) {
+		r.Use(ClientCtx)
+
+		r.Get("/", jsonClient)
+	})
 
 	return r
 }
