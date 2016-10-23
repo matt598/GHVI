@@ -61,8 +61,8 @@ def index(request):
 
     t.say('Welcome to the shelter finder')
 
-    s = Session(request.body)
-    callerID = s.fromaddress['id']
+    s = json.loads(request.body)
+    callerID = s['from']['id']
     phone = get_phone_info_from_payphone(callerID)
 
     data = json.loads(request.body)
