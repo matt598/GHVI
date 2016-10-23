@@ -222,9 +222,6 @@ def places(request):
     for action in r['actions']:
         answers[action['name']] = int(action['interpretation'])
 
-    print(answers)
-    print(birthday)
-
     def isyes(ans):
         return ans == '1' or ans == 'yes'
 
@@ -238,6 +235,9 @@ def places(request):
         return ans == '0'
 
     has_said = 0
+
+    spoken_shelters = []
+    saved_shelters = {}
 
     for shelter in shelters:
         if shelter[3] == shelter[4]:  # beds are full
@@ -271,12 +271,43 @@ def places(request):
             continue
 
         has_said += 1
-        t.say(shelter[1])
+        spoken_shelters.append('%d. %s. %s' % (has_said, shelter[1], shelter[2]))
+        saved_shelters[has_said] = shelter[0]
 
         if has_said > 5:
             break
 
+    set_with_expiry(sess, 'saved', json.dumps(saved_shelters))
+
+    t.say('You may enter a number to notify the location that you are on the way. ')
+
+    t.ask(Choices('1,2,3,4,5'), say='. '.join(spoken_shelters))
+
+    t.on(event='continue', next='/info.json')
+
     return t.RenderJson()
+
+
+@post('/info.json')
+def info(request):
+    t = Tropo()
+    r = Result(request.body)
+
+    sess = r._sessionId
+    d = json.loads(get(sess, 'coords'))
+
+    i = int(r.getInterpretation())
+
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT name FROM shelter WHERE id = ?
+        """, (d[i]))
+
+        shelter = cur.fetchone()
+
+    # TODO: send the email
+
+    t.say('We have notified %s that you are on the way.' % (shelter[0]))
 
 
 if __name__ == '__main__':
