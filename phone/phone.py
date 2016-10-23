@@ -329,7 +329,7 @@ def info(request):
 
         shelter = cur.fetchone()
 
-    print('User %d going to location %s' % (u, shelter[0]))
+    print('User %s going to location %s' % (u, shelter[0]))
 
     # TODO: send the email
 
