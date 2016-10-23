@@ -2,6 +2,7 @@ from tropo import Tropo, Session, Result, Choices
 from itty import post, run_itty
 from redis import StrictRedis
 from pyzipcode import ZipCodeDatabase
+from datetime import datetime
 import json
 import os
 import pymysql
@@ -34,21 +35,33 @@ def get_nearby_shelters_from_coords(latitude, longitude):
                 shelter.`address`,
                 shelter.`beds_available`,
                 shelter.`beds_full`,
+                shelter.`min_age`,
+                shelter.`max_age`,
+                shelter.`allow_male`,
+                shelter.`allow_female`,
+                shelter.`allow_trans`,
+                shelter.`disability`,
+                shelter.`dependent`,
+                shelter.`abuse`,
+                shelter.`veteran`,
                 haversine(shelter.latitude, shelter.longitude, %s, %s) distance
             from
                 shelter
+            where
+                shelter.`beds_available` <> shelter.`beds_full`
             order by
                 distance asc
             limit
-                5
+                50
         """, (latitude, longitude))
 
         return cur.fetchall()
 
 
 def set_with_expiry(sess, key, value, ttl=120):
-    r.set('%s:%s' % (sess, key), value)
-    r.expire(key, ttl)
+    k = '%s:%s' % (sess, key)
+    r.set(k, value)
+    r.expire(k, ttl)
 
 
 def get(sess, key):
@@ -130,18 +143,60 @@ def dob(request):
 @post('/limiters.json')
 def limiters(request):
     t = Tropo()
-    r = Result(request.body)
+    r = json.loads(request.body)['result']
 
-    print(request.body)
+    birthday = {}
+
+    for action in r['actions']:
+        birthday[action['name']] = int(action['interpretation'])
 
     try:
-        i = r.getInterpretation()
+        dt = datetime(birthday['year'], birthday['month'], birthday['day'])
     except:
-        t.say('Invalid input.')
-
+        t.say('Invalid date')
+        t.on(event='continue', next='/dob.json')
         return t.RenderJson()
 
-    print(i)
+    set_with_expiry(r['sessionId'], 'birthday', json.dumps(birthday))
+
+    def run_always():
+        return True
+
+    def veteran_val():
+        n = datetime.now()
+        return n.year - dt.year >= 18
+
+    yesno = Choices('1,2,yes,no', mode='any')
+    opts = [{
+        'name': 'gender',
+        'msg': 'What is your gender? 1 for male, 2 for female, 3 transgender male to female, 4 transgender female to male',
+        'ok': run_always,
+        'choice': Choices('1,2,3,4')
+    }, {
+        'name': 'dependent',
+        'msg': 'Do you have any children?',
+        'ok': run_always,
+        'choice': yesno,
+    }, {
+        'name': 'veteran',
+        'msg': 'Are you a veteran?',
+        'ok': veteran_val,
+        'choice': yesno,
+    }, {
+        'name': 'disability',
+        'msg': 'Do you have any disabilities?',
+        'ok': run_always,
+        'choice': yesno,
+    }, {
+        'name': 'abuse',
+        'msg': 'Are you the victim of abuse?',
+        'ok': run_always,
+        'choice': yesno,
+    }]
+
+    for opt in opts:
+        if opt['ok']():
+            t.ask(opt['choice'], say=opt['msg'], name=opt['name'])
 
     t.on(event='continue', next='/places.json')
 
@@ -157,8 +212,70 @@ def places(request):
 
     shelters = get_nearby_shelters_from_coords(d['lat'], d['lng'])
 
+    r = json.loads(request.body)['result']
+
+    answers = {}
+    birthday = json.loads(get(r._sessionId, 'birthday'))
+
+    dt = datetime(birthday['year'], birthday['month'], birthday['day'])
+    age = datetime.now() - dt.year
+
+    for action in r['actions']:
+        answers[action['name']] = int(action['interpretation'])
+
+    print(answers)
+    print(birthday)
+
+    def isyes(ans):
+        return ans == '1' or ans == 'yes'
+
+    def istrans(ans):
+        return ans == '2' or ans == '3'
+
+    def ismale(ans):
+        return ans == '1'
+
+    def isfemale(ans):
+        return ans == '0'
+
+    has_said = 0
+
     for shelter in shelters:
+        if shelter[3] == shelter[4]:  # beds are full
+            continue
+
+        if shelter[13] and (not 'veteran' in answers or not isyes(answers['veteran'])):
+            continue
+
+        if shelter[12] and not isyes(answers['abuse']):
+            continue
+
+        if shelter[11] and (not isyes(answers['dependent']) and age > 18):
+            continue
+
+        if shelter[10] and not isyes(answers['disability']):
+            continue
+
+        if not shelter[9] and istrans(answers['gender']):
+            continue
+
+        if not shelter[8] and not isfemale(answers['gender']):
+            continue
+
+        if not shelter[7] and not ismale(answers['gender']):
+            continue
+
+        if shelter[5] and age < shelter[5] and not isyes(answers['dependent']):
+            continue
+
+        if shelter[6] and age > shelter[6] and not isyes(answers['dependent']):
+            continue
+
+        has_said += 1
         t.say(shelter[1])
+
+        if has_said > 5:
+            break
 
     return t.RenderJson()
 
