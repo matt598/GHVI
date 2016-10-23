@@ -243,31 +243,31 @@ def places(request):
         if shelter[3] == shelter[4]:  # beds are full
             continue
 
-        if shelter[13] and (not 'veteran' in answers or not isyes(answers['veteran'])):
+        if shelter[13] == '1' and (not 'veteran' in answers or not isyes(answers['veteran'])):
             continue
 
-        if shelter[12] and not isyes(answers['abuse']):
+        if shelter[12] == '1' and not isyes(answers['abuse']):
             continue
 
-        if shelter[11] and (not isyes(answers['dependent']) and age > 18):
+        if shelter[11] == '1' and (not isyes(answers['dependent']) and age > 18):
             continue
 
-        if shelter[10] and not isyes(answers['disability']):
+        if shelter[10] == '1' and not isyes(answers['disability']):
             continue
 
-        if not shelter[9] and istrans(answers['gender']):
+        if shelter[9] == '0' and istrans(answers['gender']):
             continue
 
-        if not shelter[8] and not isfemale(answers['gender']):
+        if shelter[8] == '0' and not isfemale(answers['gender']):
             continue
 
-        if not shelter[7] and not ismale(answers['gender']):
+        if shelter[7] == '0' and not ismale(answers['gender']):
             continue
 
-        if shelter[5] and age < shelter[5] and not isyes(answers['dependent']):
+        if shelter[5] == '1' and age < shelter[5] and not isyes(answers['dependent']):
             continue
 
-        if shelter[6] and age > shelter[6] and not isyes(answers['dependent']):
+        if shelter[6] == '1' and age > shelter[6] and not isyes(answers['dependent']):
             continue
 
         has_said += 1
@@ -296,7 +296,7 @@ def info(request):
     sess = r._sessionId
     d = json.loads(get(sess, 'coords'))
 
-    i = int(r.getInterpretation())
+    i = r.getInterpretation()
 
     with conn.cursor() as cur:
         cur.execute("""
