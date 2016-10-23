@@ -27,6 +27,11 @@
 					<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/fill" class="form-inline">
 						<button type="submit" class="btn btn-default">Fill Bed</button>
 					</form>
+
+					<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/set">
+						<input type="hidden" name="value" value="{{ .Shelter.BedsAvailable }}">
+						<button type="submit" class="btn btn-warning">Fill All Beds</button>
+					</form>
 				{{ end }}
 
 				<form method="POST" action="/shelter/{{ .Shelter.ID }}/bed/set" class="form-inline">
