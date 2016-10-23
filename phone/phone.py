@@ -159,9 +159,6 @@ def limiters(request):
 
     set_with_expiry(r['sessionId'], 'birthday', json.dumps(birthday))
 
-    def run_always():
-        return True
-
     def veteran_val():
         n = datetime.now()
         return n.year - dt.year >= 18
@@ -170,12 +167,12 @@ def limiters(request):
     opts = [{
         'name': 'gender',
         'msg': 'What is your gender? 1 for male, 2 for female, 3 transgender male to female, 4 transgender female to male',
-        'ok': run_always,
         'choice': Choices('1,2,3,4')
+    }, {
+        'msg': 'Enter 1 for yes or 2 for no'
     }, {
         'name': 'dependent',
         'msg': 'Do you have any children?',
-        'ok': run_always,
         'choice': yesno,
     }, {
         'name': 'veteran',
@@ -185,18 +182,19 @@ def limiters(request):
     }, {
         'name': 'disability',
         'msg': 'Do you have any disabilities?',
-        'ok': run_always,
         'choice': yesno,
     }, {
         'name': 'abuse',
         'msg': 'Are you the victim of abuse?',
-        'ok': run_always,
         'choice': yesno,
     }]
 
     for opt in opts:
-        if opt['ok']():
-            t.ask(opt['choice'], say=opt['msg'], name=opt['name'])
+        if 'ok' not in opt or opt['ok']():
+            if 'choice' in opt:
+                t.ask(opt['choice'], say=opt['msg'], name=opt['name'])
+            else:
+                t.say(opt['msg'])
 
     t.on(event='continue', next='/places.json')
 
@@ -219,7 +217,7 @@ def places(request):
     birthday = json.loads(get(sess, 'birthday'))
 
     dt = datetime(birthday['year'], birthday['month'], birthday['day'])
-    age = datetime.now() - dt.year
+    age = datetime.now().year - dt.year
 
     for action in r['actions']:
         answers[action['name']] = int(action['interpretation'])
