@@ -337,7 +337,6 @@ def info(request):
 
     print('User %s going to location %s' % (u, shelter[0]))
 
-    parts = user[0].split('-')
     gender = [
         'female',
         'male',
@@ -355,7 +354,7 @@ def info(request):
         Birth date: {year}-{month}-{day}
 
         System ID: {id}
-        """.format(id=u, year=parts[0], month=parts[1], day=parts[2], gender=gender)
+        """.format(id=u, year=user[0].year, month=user[0].month, day=user[0].day, gender=gender)
     })
 
     t.say('We have notified %s that you are on the way.' % (shelter[0]))
