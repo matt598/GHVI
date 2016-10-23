@@ -82,8 +82,8 @@ def index(request):
 
     if phone:
         set_with_expiry(data['session']['id'], 'coords', json.dumps({
-            'lat': phone[3],
-            'lng': phone[4]
+            'lat': float(phone[3]),
+            'lng': float(phone[4]),
         }))
 
         phone = get_phone_info_from_payphone(callerID)
