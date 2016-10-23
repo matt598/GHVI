@@ -51,6 +51,10 @@ def set_with_expiry(sess, key, value, ttl=120):
     r.expire(key, ttl)
 
 
+def get(sess, key):
+    return r.get('%s:%s' % (sess, key))
+
+
 @post('/index.json')
 def index(request):
     t = Tropo()
@@ -69,6 +73,9 @@ def index(request):
             'lng': phone[4]
         }))
 
+        phone = get_phone_info_from_payphone(callerID)
+        t.say('I see you are calling from {city}, {state}.'.format(
+            city=phone[1], state=phone[2]))
         t.on(event='continue', next='/dob.json')
     else:
         c = Choices('[5 DIGITS]', mode='dtmf')
@@ -92,7 +99,57 @@ def zip(request):
     zcdb = ZipCodeDatabase()
     place = zcdb[i]
 
-    shelters = get_nearby_shelters_from_coords(place.latitude, place.longitude)
+    set_with_expiry(r._sessionId, 'coords', json.dumps({
+        'lat': place.latitude,
+        'lng': place.longitude,
+    }))
+
+    t.on(event='continue', next='/dob.json')
+
+    return t.RenderJson()
+
+
+@post('/dob.json')
+def dob(request):
+    t = Tropo()
+
+    year = Choices('[4 DIGITS]', mode='dtmf', name='year')
+    t.ask(year, say='What is your four digit birth year?')
+
+    month = Choices('[1-2 DIGITS]', mode='dtmf', name='month')
+    t.ask(month, say='What is your birth month as a number?')
+
+    day = Choices('[1-2 DIGITS]', mode='dtmf', name='day')
+    t.ask(day, say='What is your birth day?')
+
+    t.on(event='continue', next='/limiters.json')
+
+    return t.RenderJson()
+
+
+@post('/limiters.json')
+def limiters(request):
+    t = Tropo()
+    r = Result(request.body)
+
+    try:
+        i = r.getInterpretation()
+    except:
+        t.say('Invalid input.')
+
+        return t.RenderJson()
+
+    print(i)
+
+
+@post('/places.json')
+def places(request):
+    t = Tropo()
+    r = Result(request.body)
+
+    d = json.loads(get(r._sessionId, 'coords'))
+
+    shelters = get_nearby_shelters_from_coords(d['lat'], d['lng'])
 
     for shelter in shelters:
         t.say(shelter[1])
