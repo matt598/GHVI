@@ -233,11 +233,11 @@ def places(request):
                 VALUES (?, ?, ?, ?, ?, ?)
         """,
                     ('%d-%d-%d' % (dt.year, dt.month, dt.day),
-                     int(action['gender']) - 1,
-                     action['dependent'] == '1',
-                     action['veteran'] == '1',
-                     action['abuse'] == '1',
-                     action['disability'] == '1',
+                     int(answers['gender']) - 1,
+                     answers['dependent'] == '1',
+                     answers['veteran'] == '1',
+                     answers['abuse'] == '1',
+                     answers['disability'] == '1',
                      )
                     )
 
