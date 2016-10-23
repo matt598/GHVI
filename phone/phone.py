@@ -141,6 +141,10 @@ def limiters(request):
 
     print(i)
 
+    t.on(event='continue', next='/places.json')
+
+    return t.RenderJson()
+
 
 @post('/places.json')
 def places(request):
