@@ -1,4 +1,4 @@
-from tropo import Tropo, Session, Result, Choices
+from tropo import Tropo, Result, Choices
 from itty import post, run_itty
 from redis import StrictRedis
 from pyzipcode import ZipCodeDatabase
@@ -208,14 +208,15 @@ def places(request):
     t = Tropo()
     r = Result(request.body)
 
-    d = json.loads(get(r._sessionId, 'coords'))
+    sess = r._sessionId
+    d = json.loads(get(sess, 'coords'))
 
     shelters = get_nearby_shelters_from_coords(d['lat'], d['lng'])
 
     r = json.loads(request.body)['result']
 
     answers = {}
-    birthday = json.loads(get(r._sessionId, 'birthday'))
+    birthday = json.loads(get(sess, 'birthday'))
 
     dt = datetime(birthday['year'], birthday['month'], birthday['day'])
     age = datetime.now() - dt.year
