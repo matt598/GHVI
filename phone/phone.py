@@ -300,7 +300,7 @@ def info(request):
 
     with conn.cursor() as cur:
         cur.execute("""
-            SELECT name FROM shelter WHERE id = ?
+            SELECT name FROM shelter WHERE id = %s
         """, (d[i]))
 
         shelter = cur.fetchone()
