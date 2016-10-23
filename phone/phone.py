@@ -309,6 +309,8 @@ def info(request):
 
     t.say('We have notified %s that you are on the way.' % (shelter[0]))
 
+    return t.RenderJson()
+
 
 if __name__ == '__main__':
     r = StrictRedis()
