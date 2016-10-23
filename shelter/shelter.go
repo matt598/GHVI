@@ -16,6 +16,8 @@ import (
 type Shelter struct {
 	ID            int64         `db:"id"`
 	Name          string        `db:"name"`
+	Phone         string        `db:"phone"`
+	Email         string        `db:"email"`
 	Address       string        `db:"address"`
 	Latitude      float64       `db:"latitude"`
 	Longitude     float64       `db:"longitude"`
@@ -71,6 +73,8 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 	database.DB.MustExec(`insert into shelter (
 		name,
 		address,
+		phone,
+		email,
 		latitude,
 		longitude,
 		beds_available,
@@ -85,6 +89,8 @@ func postShelter(w http.ResponseWriter, r *http.Request) {
 		veteran) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		getFormValue(r, "name"),
 		getFormValue(r, "address"),
+		getFormValue(r, "phone"),
+		getFormValue(r, "email"),
 		loc.Lat,
 		loc.Lng,
 		getFormValue(r, "beds_available"),
