@@ -113,14 +113,14 @@ def zip(request):
 def dob(request):
     t = Tropo()
 
-    year = Choices('[4 DIGITS]', mode='dtmf', name='year')
-    t.ask(year, say='What is your four digit birth year?')
+    year = Choices('[4 DIGITS]', mode='dtmf')
+    t.ask(year, say='What is your four digit birth year?', name='year')
 
-    month = Choices('[1-2 DIGITS]', mode='dtmf', name='month')
-    t.ask(month, say='What is your birth month as a number?')
+    month = Choices('[1-2 DIGITS]', mode='dtmf')
+    t.ask(month, say='What is your birth month as a number?', name='month')
 
-    day = Choices('[1-2 DIGITS]', mode='dtmf', name='day')
-    t.ask(day, say='What is your birth day?')
+    day = Choices('[1-2 DIGITS]', mode='dtmf')
+    t.ask(day, say='What is your birth day?', name='day')
 
     t.on(event='continue', next='/limiters.json')
 
@@ -131,6 +131,8 @@ def dob(request):
 def limiters(request):
     t = Tropo()
     r = Result(request.body)
+
+    print(request.body)
 
     try:
         i = r.getInterpretation()
