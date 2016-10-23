@@ -140,6 +140,10 @@ def dob(request):
     return t.RenderJson()
 
 
+def get_better_yearish(dt):
+    return dt.year + (dt.month / 12) + (dt.day / 30)
+
+
 @post('/limiters.json')
 def limiters(request):
     t = Tropo()
@@ -161,7 +165,7 @@ def limiters(request):
 
     def veteran_val():
         n = datetime.now()
-        return n.year - dt.year >= 18
+        return get_better_yearish(n) - get_better_yearish(dt) >= 18
 
     yesno = Choices('1,2,yes,no', mode='any')
     opts = [{
@@ -217,7 +221,7 @@ def places(request):
     birthday = json.loads(get(sess, 'birthday'))
 
     dt = datetime(birthday['year'], birthday['month'], birthday['day'])
-    age = datetime.now().year - dt.year
+    age = get_better_yearish(datetime.now()) - get_better_yearish(dt)
 
     for action in r['actions']:
         answers[action['name']] = action['interpretation']
