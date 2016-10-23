@@ -344,17 +344,20 @@ def info(request):
         'transgender female to male',
     ][user[1]]
 
-    request_url = 'https://api.mailgun.net/v2/{domain}/messages'.format(domain=os.environ['DOMAIN'])
+    request_url = 'https://api.mailgun.net/v2/{domain}/messages'.format(
+        domain=os.environ['DOMAIN'])
     r = requests.post(request_url, auth=('api', os.environ['MAILGUN']), data={
         'from': 'no-reply@ghc.li',
         'to': shelter[1],
         'subject': 'Incoming person',
         'text': """There is an incoming {gender} person
 
-        Birth date: {year}-{month}-{day}
+    Birth date: {year}-{month}-{day}
+    System ID: {id}
 
-        System ID: {id}
-        """.format(id=u, year=user[0].year, month=user[0].month, day=user[0].day, gender=gender)
+---
+This message sent by an automated system.""".format(
+            id=u, year=user[0].year, month=user[0].month, day=user[0].day, gender=gender)
     })
 
     t.say('We have notified %s that you are on the way.' % (shelter[0]))
