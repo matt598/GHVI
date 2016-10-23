@@ -294,7 +294,7 @@ def info(request):
     r = Result(request.body)
 
     sess = r._sessionId
-    d = json.loads(get(sess, 'coords'))
+    d = json.loads(get(sess, 'saved'))
 
     i = r.getInterpretation()
 
